@@ -1,8 +1,8 @@
-// Imports
 const express = require("express")
 const connection = require('../../helper/db')
 // Router
 const router = express.Router();
+// Instantiate server
 
 router.get("/", (req, res) => {
     res.send("I'm on GET '/user' ")
@@ -17,6 +17,26 @@ router.get("/", (req, res) => {
             res.json(results);
           }
     })
+})
+
+router.post("/", (req, res) => {
+  // récupération des données envoyées
+  const formData = req.body;
+  console.log('console.log formData: ', formData);
+  // connexion à la base de données, et insertion de l'employé
+  connection.query('INSERT INTO user SET ?', formData, (err, results) => {
+
+    if (err) {
+      // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+      console.log(err);
+      
+      res.status(500).send("Erreur lors de la sauvegarde de user");
+    } else {
+      // Si tout s'est bien passé, on envoie un statut "ok".
+      res.sendStatus(200);
+    }
+  });
+  
 })
 
 
