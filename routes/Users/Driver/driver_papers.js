@@ -38,17 +38,16 @@ router.post('/driver_papers', (req, res) => {
 
 // Si l'ID est passé en tant que paramètre
 // écoute de l'url "/users/:id/driver_papers"
-router.put('/driver_papers/:id', (req, res) => {
+router.put('/driver_papers', (req, res) => {
     // récupération des données envoyées
     const formData = req.body;
-    // récupération des données envoyées
-    const idDriversPapers = req.params.id;
+
     // connection à la base de données, et insertion de l'employé
-    connection.query('UPDATE driver_papers SET ? WHERE id = ?', [formData, idDriversPapers], err => {
+    connection.query('UPDATE driver_papers SET ?', [formData], err => {
         if (err) {
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
             console.log(err);
-            res.status(500).send("Erreur lors de la modification d'un employé");
+            res.status(500).send("Erreur lors de la modification des drivers_papers");
         } else {
             // Si tout s'est bien passé, on envoie un statut "ok".
             res.sendStatus(200);
@@ -57,12 +56,11 @@ router.put('/driver_papers/:id', (req, res) => {
 });
 
 // écoute de l'url "/"
-router.delete('/driver_papers/:id', (req, res) => {
-    // récupération des données envoyées
-    const idDriversPapers = req.params.id;
+router.delete('/driver_papers', (req, res) => {
+
 
     // connexion à la base de données, et suppression de l'employé
-    connection.query('DELETE FROM driver_papers WHERE id = ?', [idDriversPapers], err => {
+    connection.query('DELETE FROM driver_papers', err => {
         if (err) {
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
             console.log(err);
