@@ -6,7 +6,7 @@ const router = express.Router()
 
 
 // écoute de l'url "/users/:id/driver_papers"
-router.get('/driver_papers', (req, res) => {
+router.get('/', (req, res) => {
     // connection à la base de données, et sélection des driver_papers
     connection.query('SELECT * FROM driver_papers', (err, results) => {
         if (err) {
@@ -20,7 +20,7 @@ router.get('/driver_papers', (req, res) => {
 })
 
 // écoute de l'url "/users/:id/driver_papers" avec le verbe POST
-router.post('/driver_papers', (req, res) => {
+router.post('/', (req, res) => {
     // récupération des données envoyées
     const formData = req.body;
     // connexion à la base de données, et insertion des driver_papers
@@ -38,7 +38,7 @@ router.post('/driver_papers', (req, res) => {
 
 // Si l'ID est passé en tant que paramètre
 // écoute de l'url "/users/:id/driver_papers"
-router.put('/driver_papers', (req, res) => {
+router.put('/', (req, res) => {
     // récupération des données envoyées
     const formData = req.body;
 
@@ -56,7 +56,7 @@ router.put('/driver_papers', (req, res) => {
 });
 
 // écoute de l'url "/"
-router.delete('/driver_papers', (req, res) => {
+router.delete('/', (req, res) => {
 
 
     // connexion à la base de données, et suppression de l'employé
