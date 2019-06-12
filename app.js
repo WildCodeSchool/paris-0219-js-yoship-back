@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 // Sending to the right routes
 app.use("/user", routes.user)
-app.use("/users/:id/car/:carId", routes.car_documents)
+app.use("/users/:id/car/:carId/car_documents", routes.car_documents)
 
 app.get("/", (req, res) => {
     res.send("Hi, I'm on the root '/'")

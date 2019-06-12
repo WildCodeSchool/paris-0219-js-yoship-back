@@ -3,7 +3,7 @@ const connection = require('../../../../helper/db')
 const router = express.Router();
 
 
-router.get('/car_documents', (req, res) => {
+router.get('/', (req, res) => {
     connection.query('SELECT * FROM car_documents', (err, results) => {
         if (err) {
             res.status(500).send('Erreur lors de la récupération des car_documents');
@@ -14,7 +14,7 @@ router.get('/car_documents', (req, res) => {
 })
 
 
-router.post('/car_documents', (req, res) => {
+router.post('/', (req, res) => {
     const formData = req.body;
     connection.query('INSERT INTO car_documents SET ?', formData, (err, results) => {
         if (err) {
@@ -26,7 +26,7 @@ router.post('/car_documents', (req, res) => {
     });
 });
 
-router.put('/car_documents', (req, res) => {
+router.put('/', (req, res) => {
 
     const formData = req.body;
     connection.query('UPDATE car_documents SET ?', [formData], err => {
@@ -39,7 +39,7 @@ router.put('/car_documents', (req, res) => {
     });
 });
 
-router.delete('/car_documents', (req, res) =>{
+router.delete('/', (req, res) =>{
     connection.query('DELETE FROM car_documents', err => {
       if (err) {
         console.log(err);
