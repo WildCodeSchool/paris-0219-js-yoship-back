@@ -1,6 +1,6 @@
 // Routes
-const user = require("./User/user")
+const users = require("./Users/users")
 const enterpriseInfo = require("./User/enterprise/informations")
 
 // Routes export
-module.exports = { user, enterpriseInfo };
+module.exports = { users, enterpriseInfo };
