@@ -1,6 +1,6 @@
 // Routes
+const users = require("./Users/users")
 const driver_stats = require ("./User/Driver/Driver_stats")
-const user = require("./User/user")
-
+const driver_papers = require("./Users/Driver/driver_papers")
 // Routes export
-module.exports = { user, driver_stats};
+module.exports = { users, driver_papers, driver_stats };
