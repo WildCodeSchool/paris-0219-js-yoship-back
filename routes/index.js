@@ -1,5 +1,5 @@
 // Routes
-const user = require("./User/user")
-
+const user = require("./Users/users")
+const driver_papers = require("./Users/Driver/driver_papers")
 // Routes export
-module.exports = { user };
+module.exports = { user, driver_papers };
