@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 // Sending to the right routes
 // User
-app.use("/users", routes.user)
+app.use("/users", routes.users)
 // Enterprise
 app.use("/users/:id/enterprise_info", routes.enterpriseInfo)
 
