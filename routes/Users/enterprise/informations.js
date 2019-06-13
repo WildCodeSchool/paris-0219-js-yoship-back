@@ -1,32 +1,38 @@
 // Imports
 const express = require("express")
 const connection = require('../../../helper/db')
+
 // Router
 const router = express.Router();
 
-// GETTING DATA FOR ENTERPRISE INFORMATIONS
+// Getting enterprise informations for a specific user
 router.get("/", (req, res) => {
     // Retrieving user enterprise id
     const userId = req.id
     const sql = "SELECT * FROM enterprise_informations WHERE user_id = ?"
-    connection.query(sql, userId, (err, result) => {
+    connection.query(sql, userId, (err, results) => {
         if (err)
           throw res
             .status(500)
             .send("There was a problem finding the users.");
-        return res.status(200).send(result)
+        // Return error when no enterprise informations to retrieve for this user
+        if (!results[0]) 
+            return res.status(404).send(`No enterprise informations found for ${userId}`)
+        // Sends results
+        console.log(results)
+        return res.status(200).send(results)
     })
 })
 
-// ADDS ENTERPRISE INFORMATIONS
+// Adding enteprise informations for a user
 router.post('/', (req, res) => {
-    // Retrieving user enterprise id
+    // Retrieving user id
     const userId = req.id
     console.log(req.id)
     // SQL Request
-    const sql = "INSERT INTO enterprise_informations (user_id , n_siret, address, postcode, city, country, number_of_employees, picture, description, mail, phone) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+    const sql = "INSERT INTO enterprise_informations (user_id, n_siret, address, postcode, city, country, number_of_employees, picture, description, mail, phone) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
     const values = [
-        userId,
+        userId, 
         req.body.n_siret,
         req.body.address,
         req.body.postcode,
@@ -38,45 +44,42 @@ router.post('/', (req, res) => {
         req.body.mail,
         req.body.phone
     ]
-    // connexion à la base de données, et insertion des driver_papers
+    // Connecting to the database
     connection.query(sql, values, (err, results) => {
-        if (err) {
-            // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-            console.log(err);
-            res.status(500).send("There was a problem adding enterprise informations to the database.");
-        } else {
-            console.log(results)
-            // Si tout s'est bien passé, on envoie un statut "ok".
-            res.status(200).send("Enterprise informations have been added")
-        }
+        // Sending a message in case of error
+        if (err) return res.status(500).send("There was a problem adding enterprise informations to the database.");
+        // Everything went well, enterprise infos are being added
+        console.log(results)
+        return res.status(200).send("Enterprise informations have been added")
     });
 });
 
-// UPDATES ENTERPRISE INFORMATIONS
+// Updating enterprise_informations for a user
 router.put('/', (req, res) => {
     // Retrieving user enterprise id
     const userId = req.id
     const formData = req.body
     // SQL REQUEST
-    const sql = "UPDATE user SET ? WHERE user_id = ?";
+    const sql = "UPDATE enterprise_informations SET ? WHERE user_id = ?";
     connection.query(sql, [formData, userId], (err, result) => {
         if (err) throw err;
         return res.sendStatus(200).send(result.affectedRows);
     });
 });
 
-// DELETES ENTERPRISE INFORMATIONS
+// Deleting enterprise_informations for a user
 router.delete("/", (req, res) => {
     // Retrieving user enterprise id
     const userId = req.id
     // SQL Request
     const sql = "DELETE FROM enterprise_informations WHERE user_id = ?";
-    connection.query(sql, userId, (err, user) => {
+    connection.query(sql, userId, (err, results) => {
         if (err)
-          return res
-            .status(500)
-            .send("There was a problem deleting enterprise informations.");
-        res.status(200).send("Enterprise informations have been deleted");
+            return res.status(500).send("There was a problem deleting enterprise informations.");
+        // Return error when no enterprise informations to delete
+        if (results.affectedRows === 0)
+            return res.status(404).send("No enterprise informations to delete")
+        res.status(200).send(results.affectedRows + " rows affected, enterprise informations have been deleted");
       });
 })
 
