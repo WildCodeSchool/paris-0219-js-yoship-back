@@ -20,12 +20,12 @@ app.use(bodyParser.json());
 // User
 app.use("/users", routes.users)
 // Enterprise
-// app.use("/users/:id/enterprise_info", routes.enterpriseInfo)
 app.use('/users/:id/enterprise_info', function(req, res, next) {
-    req.id = req.params.id;
+    // The enterprise_info route will use the user's id from the users route in parameters to retrieve the corresponding dataset in the database
+    // Here we are passing the user's id to the next route
+    req.id = req.params.id; 
     next()
 }, routes.enterpriseInfo);
-  
 
 app.get("/", (req, res) => {
     res.send("Hi, I'm on the root '/'")
