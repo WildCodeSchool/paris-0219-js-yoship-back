@@ -1,6 +1,5 @@
+//Routes
 
-// Routes export
-module.exports = { user, car_documents };
 const users = require("./Users/users")
 const car_documents = require("./User/Driver/Car/car_documents")
 const driver_stats = require ("./User/Driver/Driver_stats")
