@@ -4,7 +4,7 @@ require('dotenv').config();
 
 // Server port
 
-const PORT = process.env.PORT || 3006;
+const PORT = process.env.PORT || 3003;
 
 // Launch Server
 let server = app.listen(PORT, () => {
