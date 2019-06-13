@@ -11,7 +11,11 @@ const connection = mysql.createConnection({
 })
 
 connection.connect(err => {
-    if (err) throw err
+    if (err) {
+        console.log(err);
+        
+        throw err
+    }
     console.log(`Connected to the database: "${process.env.DB_NAME}" :)`)
 })
 
