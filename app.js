@@ -32,6 +32,7 @@ app.use('/users/:id/enterprise_info', function(req, res, next) {
     req.id = req.params.id; 
     next()
 }, routes.enterpriseInfo);
+app.use("/users/:id/car/:carId/car_documents", routes.car_documents)
 
 app.get("/", (req, res) => {
     res.send("Hi, I'm on the root '/'")
