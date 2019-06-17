@@ -6,63 +6,64 @@ const connection = require("../../../../helper/db")
 const router = express.Router();
 
 
-///////////////////////////////////// CAR ///////////////////////////////////////////////
+router.get("/", (req, res) => {
+    //Retrieving user id
+    const userId = req.id
+    const sql = "SELECT * FROM car WHERE user_id = ?"
+    connection.query(sql, userId, (err, results) => {
+      if (err) {
+        res.status(500).send('Erreur lors de la récupération des voitures');
+      } else if (!results[0]){
+        return res.status(404).send(`No car found for user ${userId}`)
+      } else {      
+              res.json(results);
+            }
+      })
+  })
+  
+  router.post("/", (req, res) => {
+    const userId = req.id
+    let formData = req.body
+    formData.user_id = userId
 
-// Retrieve all cars for user:id  (/users/:id/car)
-router.get("/car", (req, res) => {
-    connection.query('SELECT * FROM car', (err, results) => {
-    
-        //error 500 (Internal Server Error) 
-        if (err) {
-            res.status(500).send("Erreur lors de la récupération des données'/users/:id/car/:id'");
-        } else {
-            res.json(results);
-            //res.send("I'm on GET '/users/:id/car' ")
-        }
+    connection.query('INSERT INTO car SET ?', formData, (err, results) => {
+      if (err) {
+        console.log(err); 
+        res.status(500).send(`Erreur lors de la sauvegarde de la voiture pour l'utilisateur ${userId}`);
+      } else {
+        res.sendStatus(200);
+      }
     });
-})
+  })
+  
+  router.put("/", (req, res) => {
+    const userId = req.id
+    const formData = req.body;
+    const sql = 'UPDATE car SET ? WHERE user_id = ?'
+    connection.query(sql, [formData, userId], err => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(`Erreur lors de la modification des voitures pour l'utilisateur ${userId}`);
+      } else {
+        res.sendStatus(200);
+      }
+    });
+  });
+  
+  router.delete('/', (req, res) =>{
+    const userId = req.id
+    const sql = 'DELETE FROM car WHERE user_id = ?'
+    connection.query(sql, userId, err => {
+      if (err) {
+        console.log(err);
+        res.status(500).send(`Erreur lors de la suppression des voitures pour l'utilisateur ${userId}`);
+      } else {
+        res.sendStatus(200);
+      }
+    });
+  })
 
-// Create a new car for user:id
-router.post("/car", (req, res) => {
-    console.log("req BODY", req.body)
-    const sql = "INSERT INTO car" + 
-                "(user_id, brand, model_year, kilometers, horsepower, licence_plate, color, fuel, description) " + 
-                "VALUES (?,?,?,?,?,?,?,?,?)"
-
-const values = [
-    req.body.user_id,
-    req.body.brand,
-    req.body.model_year,
-    req.body.kilometers,
-    req.body.horsepower,
-    req.body.licence_plate,
-    req.body.color,
-    req.body.fuel,
-    req.body.description,
-]
-
-connection.query(sql, values, (err, result) => {
-    if (err)
-      throw res
-        .status(500)
-        .send("There was a problem adding the information to the database.");
-    return res.status(200).send(result)
-})
-
-});
-
-// Bulk update of all user's cars
-
-
-// Remove of all user's cars
-
-
-
-///////////////////////////////// IDCAR ////////////////////////////////////
-
-// Retrieve details of car:id for user:id  (http://localhost:30../users/iduser/idcar)
-
-router.get("/car/:idCar", (req, res) => {
+router.get("/:carID", (req, res) => {
     const idCar = req.params.idCar;
     //console.log(idCar)
     connection.query('SELECT * FROM car WHERE id = ?', [idCar], (err, results) => { 
@@ -78,7 +79,7 @@ router.get("/car/:idCar", (req, res) => {
 });
     
 // Update details of car:id for user:id if it exists
-router.put("/car/:idCar", (req, res) => {
+router.put("/:carID", (req, res) => {
     const idCar = req.params.idCar;
     const formData = req.body;
     console.log('console.log formData: ', formData);
@@ -95,7 +96,7 @@ router.put("/car/:idCar", (req, res) => {
 });
     
 // Remove car:id 
-router.delete("/car/:idCar", (req, res) => {
+router.delete("/:carID", (req, res) => {
     const idCar = req.params.idCar;
     connection.query('DELETE FROM car WHERE id = ?', [idCar], err => {
         //error 500 (Internal Server Error) 
