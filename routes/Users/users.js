@@ -2,14 +2,18 @@ const express = require("express")
 const connection = require('../../helper/db')
 // Router
 const router = express.Router();
-// Instantiate server
+
+// plugin Uuid
+const uuid = require ('uuid/v4');
 
 router.get("/", (req, res) => {
+  const formData = req.body;
+
   connection.query('SELECT * FROM user', (err, results) => {
     if (err) {
       
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-      res.status(500).send('Erreur lors de la récupération des employés');
+      res.status(500).send('Erreur lors de la récupération des users');
     } else {
       
       // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
@@ -23,7 +27,10 @@ router.post("/", (req, res) => {
   // récupération des données envoyées
   const formData = req.body;
   console.log('console.log formData: ', formData);
+  //console.log('console.log formData: ', formData);
   // connexion à la base de données, et insertion de l'employé
+  const userUuid = uuid();
+  formData.uuid = userUuid;
   connection.query('INSERT INTO user SET ?', formData, (err, results) => {
 
     if (err) {
@@ -40,7 +47,7 @@ router.post("/", (req, res) => {
 
 router.put("/", (req, res) => {
   const formData = req.body;
-  connection.query('UPDATE user SET ?', [formData], err => {
+  connection.query('UPDATE user SET ?', formData, err => {
     if (err) {
     // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
@@ -67,10 +74,11 @@ router.delete('/', (req, res) =>{
 })
 
 
-router.get("/:id", (req, res) => {
-    const idUsers = req.params.id
+router.get("/:uuid", (req, res) => {
+    const userUuid = req.params.uuid
+    
     // res.send(`I'm on GET '/user/:id' - ${id}`)
-connection.query(`SELECT * FROM user WHERE id = ?`, [idUsers], (err, results) => {
+connection.query(`SELECT * FROM user WHERE uuid = ?`, [userUuid], (err, results) => {
         if (err) {
 
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
@@ -83,10 +91,11 @@ connection.query(`SELECT * FROM user WHERE id = ?`, [idUsers], (err, results) =>
     })
 })
 
-router.put("/:id", (req, res) => {
-  const idUsers = req.params.id;
+
+router.put("/:uuid", (req, res) => {
+  const userUuid = req.params.uuid;
   const formData = req.body;
-  connection.query('UPDATE user SET ?', [formData, idUsers], err => {
+  connection.query('UPDATE user SET ? WHERE uuid = ?', [formData, userUuid], err => {
     if (err) {
     // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
@@ -98,9 +107,9 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete('/:id', (req, res) =>{
-  const idUsers = req.params.id;
-  connection.query('DELETE FROM user WHERE id = ?',[idUsers], err => {
+router.delete('/:uuid', (req, res) =>{
+  const userUuid = req.params.uuid;
+  connection.query('DELETE FROM user WHERE uuid = ?',[userUuid], err => {
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
