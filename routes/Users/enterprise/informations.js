@@ -5,10 +5,14 @@ const connection = require('../../../helper/db')
 // Router
 const router = express.Router();
 
+// Auth
+const VerifyToken = require('../../auth/verifyToken');
+const permit = require('../../auth/permission');
+
 // Getting enterprise informations for a specific user
-router.get("/", (req, res) => {
+router.get("/", VerifyToken, permit('admin', 'driver'), (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.id
+    const userId = req.userId
     const sql = "SELECT * FROM enterprise_informations WHERE user_id = ?"
     connection.query(sql, userId, (err, results) => {
         if (err)
@@ -25,10 +29,10 @@ router.get("/", (req, res) => {
 })
 
 // Adding enteprise informations for a user
-router.post('/', (req, res) => {
+router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     // Retrieving user id
-    const userId = req.id
-    console.log(req.id)
+    const userId = req.userId
+    console.log(req.userId)
     // SQL Request
     const sql = "INSERT INTO enterprise_informations (user_id, n_siret, address, postcode, city, country, number_of_employees, picture, description, mail, phone) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
     const values = [
@@ -47,17 +51,29 @@ router.post('/', (req, res) => {
     // Connecting to the database
     connection.query(sql, values, (err, results) => {
         // Sending a message in case of error
-        if (err) return res.status(500).send("There was a problem adding enterprise informations to the database.");
+        if (err)
+          return res
+            .status(500)
+            .json({
+              error: err,
+              message:
+                "There was a problem adding enterprise informations to the database."
+            });
         // Everything went well, enterprise infos are being added
         console.log(results)
-        return res.status(200).send("Enterprise informations have been added")
+        return res
+          .status(200)
+          .json({
+            affectedRows: results.affectedRows,
+            message: "Enterprise informations have been added"
+          });
     });
 });
 
 // Updating enterprise_informations for a user
-router.put('/', (req, res) => {
+router.put('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.id
+    const userId = req.userId
     const formData = req.body
     // SQL REQUEST
     const sql = "UPDATE enterprise_informations SET ? WHERE user_id = ?";
@@ -68,9 +84,9 @@ router.put('/', (req, res) => {
 });
 
 // Deleting enterprise_informations for a user
-router.delete("/", (req, res) => {
+router.delete("/", VerifyToken, permit('admin'), (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.id
+    const userId = req.userId
     // SQL Request
     const sql = "DELETE FROM enterprise_informations WHERE user_id = ?";
     connection.query(sql, userId, (err, results) => {
