@@ -5,18 +5,23 @@ const permit = (...allowed) => {
   return (req, res, next) => {
 
 		const isUserEqualTo = (paramId) => {
-			(paramId !== undefined && req.id === paramId) ? next() : res.status(403).json({ message: "Forbidden to drivers" });
+			(paramId !== undefined && req.tokenUuid === paramId) ? next() : res.status(403).json({ message: "Forbidden to drivers" });
 		}
 
-		const routeUserId = Number(req.userId);
-		const routeParamsId = Number(req.params.id)
+		const reqUuid = req.uuid;
+    const paramsUuid = req.params.uuid
+
+    // Testing uuid match
+    console.log("Token uuid: " + req.tokenUuid)
+    reqUuid === undefined ? console.log("Requested uuid: " + paramsUuid) : console.log("Requested uuid: " + reqUuid);
+
     // If a role is passed in an argument, it's allowed to proceed
     if (isAllowed(req.role.name)) {
       switch (req.role.name) {
         // When the role is admin
         // If admins is allowed then it always pass
         case "admin":
-          // Role is allowed, so continue on the next middleware
+          // Role is allowed, so continue on to the next middleware
           next();
           break;
         // When the role is driver or enterprise
@@ -24,10 +29,10 @@ const permit = (...allowed) => {
           // Checks if there is an id parameters since drivers can only take actions that concern themselves
           // If so, the parameter needs to also be equals to the current users ID
 					if (req.baseUrl === "/users") {
-						isUserEqualTo(routeParamsId)
-					}else [
-						isUserEqualTo(routeUserId)
-					]
+            isUserEqualTo(paramsUuid);
+					} else {
+						isUserEqualTo(reqUuid)
+          }
           break;
         default:
           // User forbidden

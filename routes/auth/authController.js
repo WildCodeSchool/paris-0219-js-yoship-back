@@ -4,6 +4,9 @@ const router = express.Router();
 const connection = require('../../helper/db')
 const bodyParser = require("body-parser");
 
+// plugin Uuid
+const uuid = require ('uuid/v4');
+
 // bodyParser config
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
@@ -19,10 +22,13 @@ router.post("/register", (req, res) => {
     // Crypting entered password
     const hashedPassword = bcrypt.hashSync(req.body.password, 8);
     // SQL Request
-    const sql = "INSERT INTO user SET ?";
+    const sql = "INSERT INTO users SET ?";
+    const userUuid = uuid();
     let formData = req.body
     // Replacing password by the crypted version
     formData.password = hashedPassword;
+    // Generates user's uuid
+    formData.uuid = userUuid;
     // Connecting to database
     connection.query(sql, formData, (err, user) => {
         if (err)
@@ -40,7 +46,7 @@ router.post("/register", (req, res) => {
 // Access: Public
 router.post("/login", (req, res) => {
     // SQL Request, getting user via email
-    const sql = "SELECT * FROM user WHERE mail = ?";
+    const sql = "SELECT * FROM users WHERE mail = ?";
     const values = [req.body.mail];
     // Connecting to database
     connection.query(sql, values, (err, user) => {
@@ -55,7 +61,7 @@ router.post("/login", (req, res) => {
 
         // If user is found and password is valid
         // Create a token
-        const token = jwt.sign({ id: user[0].id, role: user[0].role}, config.secret, {
+        const token = jwt.sign({ uuid: user[0].uuid, role: user[0].role}, config.secret, {
             expiresIn: 86400 // expires in 24 hours
         });
 

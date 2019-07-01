@@ -11,7 +11,7 @@ const verifyToken = (req, res, next) => {
     if (err) 
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });    
     // if everything is good, save to request for use in other routes
-    req.id = decoded.id;
+    req.tokenUuid = decoded.uuid;
     req.role = decoded.role;
     console.log(req.route.path)
     console.log(decoded)
