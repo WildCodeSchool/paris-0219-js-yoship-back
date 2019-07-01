@@ -21,12 +21,13 @@ app.use(bodyParser.json());
 // Users
 app.use("/users", routes.users)
 // Drivers
-app.use("/users/:uuid/driver-papers", function(req, res, next) {
+app.use("/users/:uuid/driverPapers", function(req, res, next) {
     // Passes the users id to the next route
     req.uuid = req.params.uuid; 
     next()
 },routes.driver_papers)
-app.use("/users/:uuid/driver-stats", function(req, res, next) {
+
+app.use("/users/:uuid/driverStats", function(req, res, next) {
     // Passes the users id to the next route
     req.uuid = req.params.uuid; 
     next()
@@ -38,12 +39,12 @@ app.use("/users/:uuid/cars", function(req, res, next) {
     next()
 },routes.cars)
 // Car documents
-app.use("/users/:uuid/cars/:carID/car-documents", function(req, res, next){
-    req.idCar = req.params.carID;
+app.use("/users/:uuid/cars/:carId/carDocuments", function(req, res, next){
+    req.idCar = req.params.carId;
     next()
 }, routes.car_documents)
 // Enterprise
-app.use('/users/:uuid/enterprise-info', function(req, res, next) {
+app.use('/users/:uuid/enterpriseInfo', function(req, res, next) {
     // The enterprise_info route will use the user's id from the users route in parameters to retrieve the corresponding dataset in the database
     // Here we are passing the user's id to the next route
     req.uuid = req.params.uuid; 

@@ -9,14 +9,14 @@ const router = express.Router();
 router.get("/", (req, res) => {
     // Retrieving user enterprise id
     const userId = req.uuid
-    const sql = "SELECT * FROM enterprise_informations WHERE user_id = ?"
+    const sql = "SELECT * FROM enterpriseInformations WHERE userId = ?"
     connection.query(sql, userId, (err, results) => {
         if (err)
-          throw res
-            .status(500)
-            .send("There was a problem finding the users.");
+            throw res
+                .status(500)
+                .send("There was a problem finding the users.");
         // Return error when no enterprise informations to retrieve for this user
-        if (!results[0]) 
+        if (!results[0])
             return res.status(404).send(`No enterprise informations found for ${userId}`)
         // Sends results
         console.log(results)
@@ -29,9 +29,9 @@ router.post('/', (req, res) => {
     // Retrieving user id
     const userId = req.uuid
     const formData = req.body
-    formData.user_id = userId
+    formData.userId = userId
     // Connecting to the database
-    connection.query('INSERT INTO enterprise_informations SET ?', formData, (err, results) => {
+    connection.query('INSERT INTO enterpriseInformations SET ?', formData, (err, results) => {
         // Sending a message in case of error
         if (err) return res.status(500).send("There was a problem adding enterprise informations to the database.");
         // Everything went well, enterprise infos are being added
@@ -46,7 +46,7 @@ router.put('/', (req, res) => {
     const userId = req.uuid
     const formData = req.body
     // SQL REQUEST
-    const sql = "UPDATE enterprise_informations SET ? WHERE user_id = ?";
+    const sql = "UPDATE enterpriseInformations SET ? WHERE userId = ?";
     connection.query(sql, [formData, userId], (err, result) => {
         if (err) throw err;
         return res.sendStatus(200).send(result.affectedRows);
@@ -58,7 +58,7 @@ router.delete("/", (req, res) => {
     // Retrieving user enterprise id
     const userId = req.uuid
     // SQL Request
-    const sql = "DELETE FROM enterprise_informations WHERE user_id = ?";
+    const sql = "DELETE FROM enterpriseInformations WHERE userId = ?";
     connection.query(sql, userId, (err, results) => {
         if (err)
             return res.status(500).send("There was a problem deleting enterprise informations.");
@@ -66,7 +66,7 @@ router.delete("/", (req, res) => {
         if (results.affectedRows === 0)
             return res.status(404).send("No enterprise informations to delete")
         res.status(200).send(results.affectedRows + " rows affected, enterprise informations have been deleted");
-      });
+    });
 })
 
 module.exports = router;

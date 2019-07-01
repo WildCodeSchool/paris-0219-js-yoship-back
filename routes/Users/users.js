@@ -4,23 +4,23 @@ const connection = require('../../helper/db')
 const router = express.Router();
 
 // plugin Uuid
-const uuid = require ('uuid/v4');
+const uuid = require('uuid/v4');
 
 router.get("/", (req, res) => {
   const formData = req.body;
 
   connection.query('SELECT * FROM users', (err, results) => {
     if (err) {
-      
+
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       res.status(500).send('Erreur lors de la récupération des users');
     } else {
-      
+
       // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
       // res.send("I'm on GET '/user' ")
-            res.json(results);
-          }
-    })
+      res.json(results);
+    }
+  })
 })
 
 router.post("/", (req, res) => {
@@ -30,11 +30,12 @@ router.post("/", (req, res) => {
   const userUuid = uuid();
   formData.uuid = userUuid;
   connection.query('INSERT INTO users SET ?', formData, (err, results) => {
+console.log(formData.uuid);
 
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
-      
+
       res.status(500).send("Erreur lors de la sauvegarde de user");
     } else {
       // Si tout s'est bien passé, on envoie un statut "ok".
@@ -47,7 +48,7 @@ router.put("/", (req, res) => {
   const formData = req.body;
   connection.query('UPDATE users SET ?', formData, err => {
     if (err) {
-    // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+      // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
       res.status(500).send("Erreur lors de la modification des users");
     } else {
@@ -57,7 +58,7 @@ router.put("/", (req, res) => {
   });
 });
 
-router.delete('/', (req, res) =>{
+router.delete('/', (req, res) => {
   connection.query('DELETE FROM users', err => {
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
@@ -73,20 +74,20 @@ router.delete('/', (req, res) =>{
 
 
 router.get("/:uuid", (req, res) => {
-    const userUuid = req.params.uuid
-    
-    // res.send(`I'm on GET '/user/:id' - ${id}`)
-connection.query(`SELECT * FROM users WHERE uuid = ?`, [userUuid], (err, results) => {
-        if (err) {
+  const userUuid = req.params.uuid
 
-            // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-            res.status(500).send('Erreur lors de la récupération des users');
-          } else {
-      
-            // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
-            res.json(results);
-          }
-    })
+  // res.send(`I'm on GET '/user/:id' - ${id}`)
+  connection.query(`SELECT * FROM users WHERE uuid = ?`, [userUuid], (err, results) => {
+    if (err) {
+
+      // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+      res.status(500).send('Erreur lors de la récupération des users');
+    } else {
+
+      // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+      res.json(results);
+    }
+  })
 })
 
 
@@ -95,7 +96,7 @@ router.put("/:uuid", (req, res) => {
   const formData = req.body;
   connection.query('UPDATE users SET ? WHERE uuid = ?', [formData, userUuid], err => {
     if (err) {
-    // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+      // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
       res.status(500).send("Erreur lors de la modification des users");
     } else {
@@ -105,9 +106,9 @@ router.put("/:uuid", (req, res) => {
   });
 });
 
-router.delete('/:uuid', (req, res) =>{
+router.delete('/:uuid', (req, res) => {
   const userUuid = req.params.uuid;
-  connection.query('DELETE FROM users WHERE uuid = ?',[userUuid], err => {
+  connection.query('DELETE FROM users WHERE uuid = ?', [userUuid], err => {
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
