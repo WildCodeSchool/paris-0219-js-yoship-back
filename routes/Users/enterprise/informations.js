@@ -8,7 +8,7 @@ const router = express.Router();
 // Getting enterprise informations for a specific user
 router.get("/", (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.id
+    const userId = req.uuid
     const sql = "SELECT * FROM enterprise_informations WHERE user_id = ?"
     connection.query(sql, userId, (err, results) => {
         if (err)
@@ -27,25 +27,11 @@ router.get("/", (req, res) => {
 // Adding enteprise informations for a user
 router.post('/', (req, res) => {
     // Retrieving user id
-    const userId = req.id
-    console.log(req.id)
-    // SQL Request
-    const sql = "INSERT INTO enterprise_informations (user_id, n_siret, address, postcode, city, country, number_of_employees, picture, description, mail, phone) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
-    const values = [
-        userId, 
-        req.body.n_siret,
-        req.body.address,
-        req.body.postcode,
-        req.body.city,
-        req.body.country,
-        req.body.number_of_employees,
-        req.body.picture,
-        req.body.description,
-        req.body.mail,
-        req.body.phone
-    ]
+    const userId = req.uuid
+    const formData = req.body
+    formData.user_id = userId
     // Connecting to the database
-    connection.query(sql, values, (err, results) => {
+    connection.query('INSERT INTO enterprise_informations SET ?', formData, (err, results) => {
         // Sending a message in case of error
         if (err) return res.status(500).send("There was a problem adding enterprise informations to the database.");
         // Everything went well, enterprise infos are being added
@@ -57,7 +43,7 @@ router.post('/', (req, res) => {
 // Updating enterprise_informations for a user
 router.put('/', (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.id
+    const userId = req.uuid
     const formData = req.body
     // SQL REQUEST
     const sql = "UPDATE enterprise_informations SET ? WHERE user_id = ?";
@@ -70,7 +56,7 @@ router.put('/', (req, res) => {
 // Deleting enterprise_informations for a user
 router.delete("/", (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.id
+    const userId = req.uuid
     // SQL Request
     const sql = "DELETE FROM enterprise_informations WHERE user_id = ?";
     connection.query(sql, userId, (err, results) => {

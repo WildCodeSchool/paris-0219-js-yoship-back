@@ -8,8 +8,8 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
     //Retrieving user id
-    const userId = req.id
-    const sql = "SELECT * FROM car WHERE user_id = ?"
+    const userId = req.uuid
+    const sql = "SELECT * FROM cars WHERE user_id = ?"
     connection.query(sql, userId, (err, results) => {
       if (err) {
         res.status(500).send('Erreur lors de la récupération des voitures');
@@ -22,11 +22,10 @@ router.get("/", (req, res) => {
   })
   
   router.post("/", (req, res) => {
-    const userId = req.id
-    let formData = req.body
+    const userId = req.uuid
+    const formData = req.body
     formData.user_id = userId
-
-    connection.query('INSERT INTO car SET ?', formData, (err, results) => {
+    connection.query('INSERT INTO cars SET ?', formData, (err, results) => {
       if (err) {
         console.log(err); 
         res.status(500).send(`Erreur lors de la sauvegarde de la voiture pour l'utilisateur ${userId}`);
@@ -37,9 +36,9 @@ router.get("/", (req, res) => {
   })
   
   router.put("/", (req, res) => {
-    const userId = req.id
+    const userId = req.uuid
     const formData = req.body;
-    const sql = 'UPDATE car SET ? WHERE user_id = ?'
+    const sql = 'UPDATE cars SET ? WHERE user_id = ?'
     connection.query(sql, [formData, userId], err => {
       if (err) {
         console.log(err);
@@ -51,8 +50,8 @@ router.get("/", (req, res) => {
   });
   
   router.delete('/', (req, res) =>{
-    const userId = req.id
-    const sql = 'DELETE FROM car WHERE user_id = ?'
+    const userId = req.uuid
+    const sql = 'DELETE FROM cars WHERE user_id = ?'
     connection.query(sql, userId, err => {
       if (err) {
         console.log(err);
@@ -64,12 +63,12 @@ router.get("/", (req, res) => {
   })
 
 router.get("/:carID", (req, res) => {
-    const idCar = req.params.idCar;
+    const idCar = req.params.carID;
     //console.log(idCar)
-    connection.query('SELECT * FROM car WHERE id = ?', [idCar], (err, results) => { 
+    connection.query('SELECT * FROM cars WHERE id = ?', [idCar], (err, results) => { 
         //error 500 (Internal Server Error) 
         if (err) {
-            res.status(500).send("Erreur lors de la récupération des données'/users/:id/car/:id'");
+            res.status(500).send("Erreur lors de la récupération des données'/users/:uuid/car/:id'");
         } else {
             //console.log(results)
             res.json(results);
@@ -80,14 +79,14 @@ router.get("/:carID", (req, res) => {
     
 // Update details of car:id for user:id if it exists
 router.put("/:carID", (req, res) => {
-    const idCar = req.params.idCar;
+    const idCar = req.params.carID;
     const formData = req.body;
     console.log('console.log formData: ', formData);
-    connection.query('UPDATE car SET ? WHERE id = ?', [formData, idCar], (err, results) => {
+    connection.query('UPDATE cars SET ? WHERE id = ?', [formData, idCar], (err, results) => {
             //error 500 (Internal Server Error) 
         if (err) {
             console.log(err);
-            res.status(500).send("Erreur lors de la modification des données'/users/:id/car/:id'");
+            res.status(500).send("Erreur lors de la modification des données'/users/:uuid/car/:id'");
         } else {
             //res.sendStatus(200);
             res.send(`I am on PUT /user/:id/${idCar}`)
@@ -97,11 +96,13 @@ router.put("/:carID", (req, res) => {
     
 // Remove car:id 
 router.delete("/:carID", (req, res) => {
-    const idCar = req.params.idCar;
-    connection.query('DELETE FROM car WHERE id = ?', [idCar], err => {
+    const idCar = req.params.carID;
+    console.log(idCar);
+    
+    connection.query('DELETE FROM cars WHERE id = ?', [idCar], err => {
         //error 500 (Internal Server Error) 
         if (err) {
-            res.status(500).send("Erreur lors de la suppression des données'/users/:id/car/:idCar'");
+            res.status(500).send("Erreur lors de la suppression des données'/users/:uuid/cars/:idCar'");
         } else {
             //res.sendStatus(200);
             res.send(`I am on DELETE /users/:id/${idCar}`)

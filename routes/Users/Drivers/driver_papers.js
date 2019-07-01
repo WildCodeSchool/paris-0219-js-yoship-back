@@ -7,8 +7,12 @@ const router = express.Router()
 
 // écoute de l'url "/users/:id/driver_papers"
 router.get('/', (req, res) => {
+    const userId = req.uuid
+    const formData = req.body
+    formData.user_id = userId
+
     // connection à la base de données, et sélection des driver_papers
-    connection.query('SELECT * FROM driver_papers', (err, results) => {
+    connection.query('SELECT * FROM driver-papers WHERE user_id = ?',userId, (err, results) => {
         if (err) {
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
             res.status(500).send('Erreur lors de la récupération des driver_papers');
@@ -22,9 +26,12 @@ router.get('/', (req, res) => {
 // écoute de l'url "/users/:id/driver_papers" avec le verbe POST
 router.post('/', (req, res) => {
     // récupération des données envoyées
-    const formData = req.body;
+    const userId = req.uuid
+    const formData = req.body
+    formData.user_id = userId
+    
     // connexion à la base de données, et insertion des driver_papers
-    connection.query('INSERT INTO driver_papers SET ?', formData, (err, results) => {
+    connection.query('INSERT INTO driver-papers SET ? WHERE user_id = ?', [formData, userId], (err, results) => {
         if (err) {
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
             console.log(err);
@@ -39,11 +46,12 @@ router.post('/', (req, res) => {
 // Si l'ID est passé en tant que paramètre
 // écoute de l'url "/users/:id/driver_papers"
 router.put('/', (req, res) => {
-    // récupération des données envoyées
-    const formData = req.body;
+    const userId = req.uuid
+    const formData = req.body
+    formData.user_id = userId
 
     // connection à la base de données, et insertion de l'employé
-    connection.query('UPDATE driver_papers SET ?', [formData], err => {
+    connection.query('UPDATE driver-papers SET ? WHERE user_id = ?', [formData, userId], err => {
         if (err) {
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
             console.log(err);
@@ -57,10 +65,12 @@ router.put('/', (req, res) => {
 
 // écoute de l'url "/"
 router.delete('/', (req, res) => {
-
+    const userId = req.uuid
+    const formData = req.body
+    formData.user_id = userId
 
     // connexion à la base de données, et suppression de l'employé
-    connection.query('DELETE FROM driver_papers', err => {
+    connection.query('DELETE FROM driver-papers WHERE user_id = ?',userId, err => {
         if (err) {
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
             console.log(err);

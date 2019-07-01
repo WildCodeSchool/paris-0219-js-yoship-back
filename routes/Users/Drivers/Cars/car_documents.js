@@ -4,7 +4,8 @@ const router = express.Router();
 
 
 router.get('/', (req, res) => {
-    connection.query('SELECT * FROM car_documents', (err, results) => {
+    const idCar = req.idCar
+    connection.query('SELECT * FROM car_documents WHERE car_id= ?', idCar, (err, results) => {
         if (err) {
             res.status(500).send('Erreur lors de la récupération des car_documents');
         } else {
@@ -13,9 +14,10 @@ router.get('/', (req, res) => {
     })
 })
 
-
 router.post('/', (req, res) => {
-    const formData = req.body;
+    const idCar = req.idCar
+    let formData = req.body
+    formData.car_id = idCar
     connection.query('INSERT INTO car_documents SET ?', formData, (err, results) => {
         if (err) {
             console.log(err);
@@ -27,8 +29,9 @@ router.post('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-
-    const formData = req.body;
+    const idCar = req.idCar
+    let formData = req.body
+    formData.car_id = idCar
     connection.query('UPDATE car_documents SET ?', [formData], err => {
         if (err) {
             console.log(err);
@@ -40,6 +43,9 @@ router.put('/', (req, res) => {
 });
 
 router.delete('/', (req, res) =>{
+    const idCar = req.idCar
+    let formData = req.body
+    formData.car_id = idCar
     connection.query('DELETE FROM car_documents', err => {
       if (err) {
         console.log(err);
@@ -49,8 +55,6 @@ router.delete('/', (req, res) =>{
       }
     });
   })
-
-
 
 
 module.exports = router;

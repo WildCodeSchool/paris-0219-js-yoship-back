@@ -21,14 +21,12 @@ router.get("/", (req, res) => {
     })
 })
 
-
-
 router.post("/", (req, res) => {
-  // récupération des données envoyées
-  const formData = req.body;
-  console.log('console.log formData: ', formData);
+  const userId = req.uuid
+  const formData = req.body
+  formData.user_id = userId
   // connexion à la base de données, et insertion de l'employé
-  connection.query('INSERT INTO driver_stats SET ?', formData, (err, results) => {
+  connection.query('INSERT INTO driver_stats SET ? WHERE user_id = ?', [formData, userId], (err, results) => {
 
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
@@ -43,13 +41,13 @@ router.post("/", (req, res) => {
 })
 
 router.put("/", (req, res) => {
-  const formData = req.body;
-  connection.query('UPDATE driver_stats SET ?', [formData], err => {
+  const formData = req.body
+  connection.query('UPDATE driver_stats SET ?', formData, err => {
     if (err) {
     // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
       res.status(500).send("Erreur lors de la modification des driver_stats");
-    } else {
+    } else { 
       // Si tout s'est bien passé, on envoie un statut "ok".
       res.sendStatus(200);
     }
@@ -57,7 +55,10 @@ router.put("/", (req, res) => {
 });
 
 router.delete('/', (req, res) =>{
-  connection.query('DELETE FROM driver_stats', err => {
+  const userId = req.uuid
+  const formData = req.body
+  formData.user_id = userId
+  connection.query('DELETE FROM driver_stats WHERE user_id = ?', userId, err => {
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
