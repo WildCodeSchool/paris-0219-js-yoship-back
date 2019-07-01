@@ -10,10 +10,10 @@ const VerifyToken = require('../../auth/verifyToken');
 const permit = require('../../auth/permission');
 
 // Getting enterprise informations for a specific user
-router.get("/", VerifyToken, permit('admin', 'driver'), (req, res) => {
+router.get("/", VerifyToken, permit('admin', 'enterprise'), (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.userId
-    const sql = "SELECT * FROM enterprise_informations WHERE user_id = ?"
+    const userId = req.uuid
+    const sql = "SELECT * FROM enterprise-informations WHERE user_id = ?"
     connection.query(sql, userId, (err, results) => {
         if (err)
           throw res
@@ -29,27 +29,18 @@ router.get("/", VerifyToken, permit('admin', 'driver'), (req, res) => {
 })
 
 // Adding enteprise informations for a user
-router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
-    // Retrieving user id
-    const userId = req.userId
-    console.log(req.userId)
+router.post('/', VerifyToken, permit('admin', 'enterprise'), (req, res) => {
     // SQL Request
-    const sql = "INSERT INTO enterprise_informations (user_id, n_siret, address, postcode, city, country, number_of_employees, picture, description, mail, phone) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
-    const values = [
-        userId, 
-        req.body.n_siret,
-        req.body.address,
-        req.body.postcode,
-        req.body.city,
-        req.body.country,
-        req.body.number_of_employees,
-        req.body.picture,
-        req.body.description,
-        req.body.mail,
-        req.body.phone
-    ]
+    const sql = "INSERT INTO enterprise-informations SET ?"
+
+    // Retrieving user id
+    const userId = req.uuid
+    const formData = req.body
+    formData.user_id = userId
+    console.log(req.uuid)
+
     // Connecting to the database
-    connection.query(sql, values, (err, results) => {
+    connection.query(sql, formData, (err, results) => {
         // Sending a message in case of error
         if (err)
           return res
@@ -71,12 +62,12 @@ router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
 });
 
 // Updating enterprise_informations for a user
-router.put('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
+router.put('/', VerifyToken, permit('admin', 'enterprise'), (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.userId
+    const userId = req.uuid
     const formData = req.body
     // SQL REQUEST
-    const sql = "UPDATE enterprise_informations SET ? WHERE user_id = ?";
+    const sql = "UPDATE enterprise-informations SET ? WHERE user_id = ?";
     connection.query(sql, [formData, userId], (err, result) => {
         if (err) throw err;
         return res.sendStatus(200).send(result.affectedRows);
@@ -86,9 +77,9 @@ router.put('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
 // Deleting enterprise_informations for a user
 router.delete("/", VerifyToken, permit('admin'), (req, res) => {
     // Retrieving user enterprise id
-    const userId = req.userId
+    const userId = req.uuid
     // SQL Request
-    const sql = "DELETE FROM enterprise_informations WHERE user_id = ?";
+    const sql = "DELETE FROM enterprise-informations WHERE user_id = ?";
     connection.query(sql, userId, (err, results) => {
         if (err)
             return res.status(500).send("There was a problem deleting enterprise informations.");
