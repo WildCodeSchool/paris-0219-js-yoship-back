@@ -34,10 +34,12 @@ router.post('/', (req, res) => {
 console.log(formData);
 
     // connexion à la base de données, et insertion des driver_papers
-    connection.query('INSERT INTO driverPapers SET ? WHERE userId = ?', [formData, userId], (err, results) => {
+    connection.query('INSERT INTO driverPapers SET ?', [formData, userId], (err, results) => {
         if (err) {
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
             console.log(err);
+            console.log(results)
+
             res.status(500).send("Erreur lors de la sauvegarde des driversPapers");
         } else {
             // Si tout s'est bien passé, on envoie un statut "ok".

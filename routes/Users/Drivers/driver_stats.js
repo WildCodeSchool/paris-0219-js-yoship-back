@@ -26,7 +26,7 @@ router.post("/", (req, res) => {
   const formData = req.body
   formData.userId = userId
   // connexion à la base de données, et insertion de l'employé
-  connection.query('INSERT INTO driverStats SET ? WHERE userId = ?', [formData, userId], (err, results) => {
+  connection.query('INSERT INTO driverStats SET ?', [formData, userId], (err, results) => {
 
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
