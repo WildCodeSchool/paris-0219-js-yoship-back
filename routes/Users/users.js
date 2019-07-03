@@ -80,7 +80,7 @@ router.get("/:uuid", VerifyToken, permit('admin', 'driver'), (req, res) => {
     })
 })
 
-router.put("/:uuid", permit('admin', 'driver'), (req, res) => {
+router.put("/:uuid", VerifyToken, permit('admin', 'driver'), (req, res) => {
   const userUuid = req.params.uuid;
   const formData = req.body;
   connection.query('UPDATE users SET ? WHERE uuid = ?', [formData, userUuid], err => {

@@ -50,6 +50,7 @@ router.post("/login", (req, res) => {
     const values = [req.body.mail];
     // Connecting to database
     connection.query(sql, values, (err, user) => {
+        console.log(user[0])
         // Errors
         if (err) throw res.status(500).send("There was a problem finding the users.");
         // The user (email) is incorrect
@@ -68,7 +69,7 @@ router.post("/login", (req, res) => {
         res.header("Access-Control-Expose-Headers", "x-access-token")
         res.set("x-access-token", token)
 
-        res.status(200).json({ auth: true, token: token });
+        res.status(200).json({ auth: true, token: token, uuid: user[0].uuid });
     });
 })
 
