@@ -4,22 +4,24 @@ const router = express.Router();
 
 
 router.get('/', (req, res) => {
-    connection.query('SELECT * FROM car_documents', (err, results) => {
+    const idCar = req.idCar
+    connection.query('SELECT * FROM carDocuments WHERE carId= ?', idCar, (err, results) => {
         if (err) {
-            res.status(500).send('Erreur lors de la récupération des car_documents');
+            res.status(500).send('Erreur lors de la récupération des carDocuments');
         } else {
             res.json(results);
         }
     })
 })
 
-
 router.post('/', (req, res) => {
-    const formData = req.body;
-    connection.query('INSERT INTO car_documents SET ?', formData, (err, results) => {
+    const idCar = req.idCar
+    let formData = req.body
+    formData.carId = idCar
+    connection.query('INSERT INTO carDocuments SET ?', formData, (err, results) => {
         if (err) {
             console.log(err);
-            res.status(500).send("Erreur lors de la sauvegarde des car_documents");
+            res.status(500).send("Erreur lors de la sauvegarde des carDocuments");
         } else {
             res.sendStatus(200);
         }
@@ -27,12 +29,13 @@ router.post('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-
-    const formData = req.body;
-    connection.query('UPDATE car_documents SET ?', [formData], err => {
+    const idCar = req.idCar
+    let formData = req.body
+    formData.carId = idCar
+    connection.query('UPDATE carDocuments SET ?', [formData], err => {
         if (err) {
             console.log(err);
-            res.status(500).send("Erreur lors de la modification des car_documents");
+            res.status(500).send("Erreur lors de la modification des carDocuments");
         } else {
             res.sendStatus(200);
         }
@@ -40,17 +43,18 @@ router.put('/', (req, res) => {
 });
 
 router.delete('/', (req, res) =>{
-    connection.query('DELETE FROM car_documents', err => {
+    const idCar = req.idCar
+    let formData = req.body
+    formData.carId = idCar
+    connection.query('DELETE FROM carDocuments', err => {
       if (err) {
         console.log(err);
-        res.status(500).send("Erreur lors de la suppression des car_documents");
+        res.status(500).send("Erreur lors de la suppression des carDocuments");
       } else {
         res.sendStatus(200);
       }
     });
   })
-
-
 
 
 module.exports = router;
