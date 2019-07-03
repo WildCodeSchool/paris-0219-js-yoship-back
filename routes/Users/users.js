@@ -75,6 +75,8 @@ router.get("/:uuid", VerifyToken, permit('admin', 'driver'), (req, res) => {
         if (err)
           // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
           throw res.status(500).send("Erreur lors de la récupération des users");
+        if (!results[0])
+          throw res.status(404).json({message: "User not found"})
         // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
         return res.status(200).json(results); 
     })

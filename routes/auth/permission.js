@@ -16,8 +16,8 @@ const permit = (...allowed) => {
     reqUuid === undefined ? console.log("Requested uuid: " + paramsUuid) : console.log("Requested uuid: " + reqUuid);
 
     // If a role is passed in an argument, it's allowed to proceed
-    if (isAllowed(req.role.name)) {
-      switch (req.role.name) {
+    if (isAllowed(req.role)) {
+      switch (req.role) {
         // When the role is admin
         // If admins is allowed then it always pass
         case "admin":
