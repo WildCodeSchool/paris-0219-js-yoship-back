@@ -5,8 +5,12 @@ const connection = require('../../../helper/db')
 // Router
 const router = express.Router();
 
+// Auth
+const VerifyToken = require('../../auth/verifyToken');
+const permit = require('../../auth/permission');
+
 // Getting enterprise informations for a specific user
-router.get("/", (req, res) => {
+router.get("/", VerifyToken, permit('admin', 'enterprise'), (req, res) => {
     // Retrieving user enterprise id
     const userId = req.uuid
     const sql = "SELECT * FROM enterpriseInformations WHERE userId = ?"
@@ -25,23 +29,40 @@ router.get("/", (req, res) => {
 })
 
 // Adding enteprise informations for a user
-router.post('/', (req, res) => {
+router.post('/', VerifyToken, permit('admin', 'enterprise'), (req, res) => {
+    // SQL Request
+    const sql = "INSERT INTO enterpriseInformations SET ?"
+
     // Retrieving user id
     const userId = req.uuid
     const formData = req.body
-    formData.userId = userId
+    formData.user_id = userId
+    console.log(req.uuid)
+
     // Connecting to the database
     connection.query('INSERT INTO enterpriseInformations SET ?', formData, (err, results) => {
         // Sending a message in case of error
-        if (err) return res.status(500).send("There was a problem adding enterprise informations to the database.");
+        if (err)
+          return res
+            .status(500)
+            .json({
+              error: err,
+              message:
+                "There was a problem adding enterprise informations to the database."
+            });
         // Everything went well, enterprise infos are being added
         console.log(results)
-        return res.status(200).send("Enterprise informations have been added")
+        return res
+          .status(200)
+          .json({
+            affectedRows: results.affectedRows,
+            message: "Enterprise informations have been added"
+          });
     });
 });
 
 // Updating enterprise_informations for a user
-router.put('/', (req, res) => {
+router.put('/', VerifyToken, permit('admin', 'enterprise'), (req, res) => {
     // Retrieving user enterprise id
     const userId = req.uuid
     const formData = req.body
@@ -54,7 +75,7 @@ router.put('/', (req, res) => {
 });
 
 // Deleting enterprise_informations for a user
-router.delete("/", (req, res) => {
+router.delete("/", VerifyToken, permit('admin'), (req, res) => {
     // Retrieving user enterprise id
     const userId = req.uuid
     // SQL Request

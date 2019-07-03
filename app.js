@@ -2,6 +2,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 // Getting all routes
 const routes = require("./routes/index")
@@ -11,6 +12,7 @@ const app = express();
 
 // Middlewares
 app.use(morgan("dev"));
+app.use(cors());
 
 // Body Parser configuration
 app.use(bodyParser.urlencoded({extended: false}))
@@ -18,6 +20,8 @@ app.use(bodyParser.json());
 
 // Sending to the right routes
 
+// Authentication
+app.use("/", routes.auth)
 // Users
 app.use("/users", routes.users)
 // Drivers
@@ -50,7 +54,6 @@ app.use('/users/:uuid/enterpriseInfo', function(req, res, next) {
     req.uuid = req.params.uuid; 
     next()
 }, routes.enterpriseInfo);
-
 
 app.get("/", (req, res) => {
     res.send("Hi, I'm on the root '/'")
