@@ -33,7 +33,7 @@ router.post("/", VerifyToken, permit('admin'), (req, res) => {
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
-      
+
       res.status(500).send("Erreur lors de la sauvegarde de user");
     } else {
       // Si tout s'est bien passé, on envoie un statut "ok".
@@ -44,9 +44,9 @@ router.post("/", VerifyToken, permit('admin'), (req, res) => {
 
 router.put("/", VerifyToken, permit('admin'), (req, res) => {
   const formData = req.body;
-  connection.query('UPDATE users SET ?', [formData], err => {
+  connection.query('UPDATE users SET ?', formData, err => {
     if (err) {
-    // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+      // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
       res.status(500).send("Erreur lors de la modification des users");
     } else {
@@ -85,7 +85,7 @@ router.put("/:uuid", VerifyToken, permit('admin', 'driver'), (req, res) => {
   const formData = req.body;
   connection.query('UPDATE users SET ? WHERE uuid = ?', [formData, userUuid], err => {
     if (err) {
-    // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+      // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
       res.status(500).send("Erreur lors de la modification des users");
     } else {
