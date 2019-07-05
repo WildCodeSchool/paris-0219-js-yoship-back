@@ -15,6 +15,8 @@ router.use(bodyParser.json());
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const config = require("../../config");
+const VerifyToken = require('../auth/verifyToken');
+const permit = require('../auth/permission');
 
 // Register a new user
 // Access: Public
@@ -71,6 +73,19 @@ router.post("/login", (req, res) => {
 
         res.status(200).json({ auth: true, token: token, uuid: user[0].uuid });
     });
+})
+
+
+router.get("/verify/admin", VerifyToken, permit('admin'), (req, res) => {
+      return res.status(200).json({uuid: req.tokenUuid, role: req.role});
+})
+
+router.get("/verify/driver", VerifyToken, permit('driver'), (req, res) => {
+    return res.status(200).json({uuid: req.tokenUuid, role: req.role});
+})
+
+router.get("/verify/enterprise", VerifyToken, permit('admin', 'enterprise'), (req, res) => {
+    return res.status(200).json({uuid: req.tokenUuid, role: req.role});
 })
 
 // Log out a user
