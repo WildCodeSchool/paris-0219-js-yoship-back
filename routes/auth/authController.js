@@ -32,16 +32,19 @@ router.post("/register", (req, res) => {
     // Generates user's uuid
     formData.uuid = userUuid;
     // Connecting to database
-    connection.query(sql, formData, (err, user) => {
-        if (err)
-          throw res.status(500).json({
-            err: err,
-            message:
-              "There was a problem registering the user."
-          });
-        // Response
-        return res.status(200).json(user)
-    });
+
+    if (formData.role !== 'admin') {
+        connection.query(sql, formData, (err, user) => {
+            if (err)
+              throw res.status(500).json({
+                err: err,
+                message:
+                  "There was a problem registering the user."
+              });
+            // Response
+            return res.status(200).json(user)
+        });
+    }
 });
 
 // Login a user
