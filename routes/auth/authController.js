@@ -79,6 +79,12 @@ router.post("/login", (req, res) => {
     });
 })
 
+
+// Route to verify an admin role
+router.get("/verify", VerifyToken, permit('admin', 'driver', 'enterprise'), (req, res) => {
+    return res.status(200).json({uuid: req.tokenUuid, role: req.role});
+})
+
 // Route to verify an admin role
 router.get("/verify/admin", VerifyToken, permit('admin'), (req, res) => {
       return res.status(200).json({uuid: req.tokenUuid, role: req.role});
