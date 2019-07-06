@@ -80,7 +80,7 @@ router.get("/verify/admin", VerifyToken, permit('admin'), (req, res) => {
       return res.status(200).json({uuid: req.tokenUuid, role: req.role});
 })
 
-router.get("/verify/driver", VerifyToken, permit('driver'), (req, res) => {
+router.get("/verify/driver", VerifyToken, permit('admin','driver'), (req, res) => {
     return res.status(200).json({uuid: req.tokenUuid, role: req.role});
 })
 
