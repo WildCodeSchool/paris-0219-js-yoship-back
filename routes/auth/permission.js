@@ -16,7 +16,7 @@ const permit = (...allowed) => {
     // Testing uuid match
     console.log("Token uuid: " + req.tokenUuid)
     reqUuid === undefined ? console.log("Requested params uuid: " + reqParamsUuid) : console.log("Requested uuid: " + reqUuid);
-
+    console.log(req.baseUrl)
     // If a role is passed in an argument, it's allowed to proceed
     if (isAllowed(req.role)) {
       switch (req.role) {
