@@ -11,10 +11,12 @@ const uuid = require ('uuid/v4');
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
-// Authorization packages
+// Authorization && Authentication packages
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const config = require("../../config");
+const VerifyToken = require('../auth/verifyToken');
+const permit = require('../auth/permission');
 
 // Register a new user
 // Access: Public
@@ -29,17 +31,21 @@ router.post("/register", (req, res) => {
     formData.password = hashedPassword;
     // Generates user's uuid
     formData.uuid = userUuid;
-    // Connecting to database
-    connection.query(sql, formData, (err, user) => {
-        if (err)
-          throw res.status(500).json({
-            err: err,
-            message:
-              "There was a problem registering the user."
-          });
-        // Response
-        return res.status(200).json(user)
-    });
+
+    // Prevents from registering an admin role
+    if (formData.role !== 'admin') {
+        // Connecting to database
+        connection.query(sql, formData, (err, user) => {
+            if (err)
+              throw res.status(500).json({
+                err: err,
+                message:
+                  "There was a problem registering the user."
+              });
+            // Response
+            return res.status(200).json(user)
+        });
+    }
 });
 
 // Login a user
@@ -73,10 +79,31 @@ router.post("/login", (req, res) => {
     });
 })
 
+
+// Route to verify an admin role
+router.get("/verify", VerifyToken, permit('admin', 'driver', 'enterprise'), (req, res) => {
+    return res.status(200).json({uuid: req.tokenUuid, role: req.role});
+})
+
+// Route to verify an admin role
+router.get("/verify/admin", VerifyToken, permit('admin'), (req, res) => {
+      return res.status(200).json({uuid: req.tokenUuid, role: req.role});
+})
+
+// Route to verify a driver role
+router.get("/verify/driver", VerifyToken, permit('admin', 'driver'), (req, res) => {
+    return res.status(200).json({uuid: req.tokenUuid, role: req.role});
+})
+
+// Route to verify an enterprise role
+router.get("/verify/enterprise", VerifyToken, permit('admin', 'enterprise'), (req, res) => {
+    return res.status(200).json({uuid: req.tokenUuid, role: req.role});
+})
+
 // Log out a user
 // Access: ?
 router.get('/logout', (req, res) => {
-    res.status(200).send({ auth: false, token: null });
+    res.status(200).json({ auth: false, token: null });
 });
 
 module.exports = router;
