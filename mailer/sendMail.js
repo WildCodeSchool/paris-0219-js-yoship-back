@@ -1,40 +1,51 @@
 const express = require('express');
-//const bodyParser = require('body-parser');
-//const exphbs = require('express-handlebars');
-//const path = require('path');
 const nodemailer = require("nodemailer");
-const app = express();
-// const port = 3000;
+const router = express.Router()
 
-// Creation of the method of transport of the email 
-const smtpTransport = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // upgrade later with STARTTLS
-  service: "Gmail",
-  auth: {
-      user: "yoshipdev@gmail.com",
-      pass: "wildcodeschool"
-  }
+router.post('/', (req, res) => { 
+  // Creation of the method of transport of the email 
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // upgrade later with STARTTLS
+    service: "Gmail",
+    auth: {
+        user: "yoshipdev@gmail.com",
+        pass: "wildcodeschool"
+    }
+  });
+
+  const sender = req.body.email;
+  const status = req.body.status;
+  const firstname = req.body.firstname;
+  const lastname = req.body.lastname;
+  const phone = req.body.phone;
+  const message = req.body.message;
+  
+
+  const mailOptions = {
+    from: "yoshipdev@gmail.com",
+    to: sender, //to: 'khasso.bera@hotmail.com',
+    subject: status, // Subject line
+    text: message, // plain text body
+    firstname : firstname,
+    lastname : lastname,
+    phone : phone,
+  };
+  console.log(mailOptions)
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.error(error);
+    } else {
+      console.log('Message %s envoyer: %s', info.messageId, info.response);
+      transporter.close()
+    }
+  });
+   
+  res.sendStatus(200);
 });
 
-smtpTransport.sendMail({
-  from: "Deer Wild <yoshipdev@gmail.com>", // Expediteur
-  to: "quintarion@gmail.com", // Destinataires
-  subject: "Test nodemailer !", // Sujet
-  text: "Hello world ✔", // plaintext body
-  html: "<b>Hi, petit test via node mailer ! ✔</b>" // html body
-}, (error, response) => {
-  if(error){
-    console.log("Erreur lors de l'envoie du mail!");
-    console.log(error);
-  }else{
-    console.log("Mail envoyé avec succès!");
-  }
-  smtpTransport.close();
-});
-
-
+module.exports = router;
 
 
 
