@@ -75,7 +75,7 @@ router.post("/login", (req, res) => {
         res.header("Access-Control-Expose-Headers", "x-access-token")
         res.set("x-access-token", token)
 
-        res.status(200).json({ auth: true, token: token, uuid: user[0].uuid });
+        res.status(200).json({ auth: true, token: token, uuid: user[0].uuid, role: user[0].role });
     });
 })
 
