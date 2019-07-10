@@ -23,7 +23,7 @@ router.get('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
             res.status(500).send('Erreur lors de la récupération des driverPapers');
         } else {
             // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
-            res.json(results);
+            res.json(results[0]);
         }
     })
 })
