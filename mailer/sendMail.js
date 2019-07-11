@@ -22,15 +22,19 @@ router.post('/', (req, res) => {
   const phone = req.body.phone;
   const message = req.body.message;
   
-
   const mailOptions = {
-    from: "yoshipdev@gmail.com",
-    to: sender, //to: 'khasso.bera@hotmail.com',
+    // The e-mail address of the sender
+    from: sender,
+    // An e-mail address that will appear on the Sender: field
+    sender: sender,
+    // Comma separated list or an array of recipients e-mail addresses that will appear on the To: field
+    to: "yoshipdev@gmail.com",
     subject: status, // Subject line
     text: message, // plain text body
-    firstname : firstname,
-    lastname : lastname,
-    phone : phone,
+    firstname,
+    lastname,
+    phone,
+    sender,
   };
   console.log(mailOptions)
   transporter.sendMail(mailOptions, (error, info) => {
