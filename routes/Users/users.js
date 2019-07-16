@@ -71,7 +71,7 @@ router.delete('/', VerifyToken, permit('admin'), (req, res) =>{
 
 router.get("/:uuid", VerifyToken, permit('admin', 'driver'), (req, res) => {
     const userUuid = req.params.uuid
-    connection.query(`SELECT * FROM users WHERE uuid = ?`, [userUuid], (err, results) => {
+    connection.query("SELECT * FROM users WHERE uuid = ?", [userUuid], (err, results) => {
         if (err)
           // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
           throw res.status(500).send("Erreur lors de la récupération des users");
@@ -85,7 +85,7 @@ router.get("/:uuid", VerifyToken, permit('admin', 'driver'), (req, res) => {
 router.put("/:uuid", VerifyToken, permit('admin', 'driver'), (req, res) => {
   const userUuid = req.params.uuid;
   const formData = req.body;
-  connection.query('UPDATE users SET ? WHERE uuid = ?', [formData, userUuid], err => {
+  connection.query("UPDATE users SET ? WHERE uuid = ?", [formData, userUuid], err => {
     if (err) {
       // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
       console.log(err);
