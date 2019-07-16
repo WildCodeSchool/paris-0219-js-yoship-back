@@ -104,6 +104,23 @@ router.post("/login", (req, res) => {
     });
 })
 
+router.put("/confirmation/:token", VerifyToken, (req, res, next) => {
+    // SQL Request, getting user via id
+    const sql = "UPDATE users SET emailVerified = ? WHERE uuid = ?";
+    console.log(req)
+    const values = [
+      true,
+      req.tokenUuid
+    ];
+    console.log(req.tokenUuid)
+    connection.query(sql, values, (err, user) => {
+        console.log(user)
+        if (err)
+        return res.status(500).send("There was a problem finding the user.");
+        res.status(200).send(user);
+    });
+});
+
 
 // Route to verify an admin role
 router.get("/verify", VerifyToken, permit('admin', 'driver', 'enterprise'), (req, res) => {
