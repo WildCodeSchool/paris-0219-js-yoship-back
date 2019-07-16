@@ -18,6 +18,17 @@ const config = require("../../config");
 const VerifyToken = require('../auth/verifyToken');
 const permit = require('../auth/permission');
 
+// Email package
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASSWORD,
+    },
+  });
+
 // Register a new user
 // Access: Public
 router.post("/register", (req, res) => {
@@ -42,6 +53,20 @@ router.post("/register", (req, res) => {
                 message:
                   "There was a problem registering the user."
               });
+
+            // Create a token
+            const token = jwt.sign({ uuid: user[0].uuid, role: user[0].role}, config.secret, {
+                expiresIn: 86400 // expires in 24 hours
+            });
+
+            const url = `http://localhost:3000/confirm/${token}`;
+
+            transporter.sendMail({
+                to: req.body.email,
+                subject: 'Confirm Email',
+                html: `Please click this email to confirm your email: <a href="${url}">${url}</a>`,
+            });
+            
             // Response
             return res.status(200).json(user)
         });
