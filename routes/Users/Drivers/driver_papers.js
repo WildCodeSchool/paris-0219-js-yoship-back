@@ -1,12 +1,16 @@
 //Imports
 const express = require("express")
 const connection = require("../../../helper/db")
+
 //Router
 const router = express.Router()
 
+// Auth
+const VerifyToken = require('../../auth/verifyToken');
+const permit = require('../../auth/permission');
 
 // écoute de l'url "/users/:id/driver_papers"
-router.get('/', (req, res) => {
+router.get('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     const userId = req.uuid
     const formData = req.body
     formData.userId = userId
@@ -25,21 +29,17 @@ router.get('/', (req, res) => {
 })
 
 // écoute de l'url "/users/:id/driver_papers" avec le verbe POST
-router.post('/', (req, res) => {
+router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     // récupération des données envoyées
     const userId = req.uuid
     const formData = req.body
     formData.userId = userId
-
-console.log(formData);
-
     // connexion à la base de données, et insertion des driver_papers
     connection.query('INSERT INTO driverPapers SET ?', [formData, userId], (err, results) => {
         if (err) {
             // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
             console.log(err);
             console.log(results)
-
             res.status(500).send("Erreur lors de la sauvegarde des driversPapers");
         } else {
             // Si tout s'est bien passé, on envoie un statut "ok".
@@ -50,7 +50,7 @@ console.log(formData);
 
 // Si l'ID est passé en tant que paramètre
 // écoute de l'url "/users/:id/driver_papers"
-router.put('/', (req, res) => {
+router.put('/',  VerifyToken, permit('admin', 'driver'), (req, res) => {
     const userId = req.uuid
     const formData = req.body
     formData.userId = userId
@@ -69,7 +69,7 @@ router.put('/', (req, res) => {
 });
 
 // écoute de l'url "/"
-router.delete('/', (req, res) => {
+router.delete('/',  VerifyToken, permit('admin', 'driver'), (req, res) => {
     const userId = req.uuid
     const formData = req.body
     formData.userId = userId

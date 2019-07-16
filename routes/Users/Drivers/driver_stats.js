@@ -4,9 +4,11 @@ const connection = require("../../../helper/db")
 const router = express.Router();
 // Instantiate server
 
+// Auth
+const VerifyToken = require('../../auth/verifyToken');
+const permit = require('../../auth/permission');
 
-
-router.get("/", (req, res) => {
+router.get("/", VerifyToken, permit('admin', 'driver'), (req, res) => {
   connection.query('SELECT * FROM driverStats', (err, results) => {
     if (err) {
 
@@ -21,7 +23,7 @@ router.get("/", (req, res) => {
   })
 })
 
-router.post("/", (req, res) => {
+router.post("/", VerifyToken, permit('admin'), (req, res) => {
   const userId = req.uuid
   const formData = req.body
   formData.userId = userId
@@ -40,7 +42,7 @@ router.post("/", (req, res) => {
   });
 })
 
-router.put("/", (req, res) => {
+router.put("/", VerifyToken, permit('admin'), (req, res) => {
   const formData = req.body
   connection.query('UPDATE driverStats SET ?', formData, err => {
     if (err) {
@@ -54,7 +56,7 @@ router.put("/", (req, res) => {
   });
 });
 
-router.delete('/', (req, res) => {
+router.delete('/', VerifyToken, permit('admin'), (req, res) => {
   const userId = req.uuid
   const formData = req.body
   formData.userId = userId

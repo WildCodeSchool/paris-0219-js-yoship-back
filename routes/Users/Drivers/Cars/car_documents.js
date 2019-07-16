@@ -1,9 +1,13 @@
+//Imports
 const express = require("express")
 const connection = require('../../../../helper/db')
+// Auth
+const VerifyToken = require('../../../auth/verifyToken');
+const permit = require('../../../auth/permission');
+//Router
 const router = express.Router();
 
-
-router.get('/', (req, res) => {
+router.get('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     const idCar = req.idCar
     connection.query('SELECT * FROM carDocuments WHERE carId= ?', idCar, (err, results) => {
         if (err) {
@@ -14,7 +18,7 @@ router.get('/', (req, res) => {
     })
 })
 
-router.post('/', (req, res) => {
+router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     const idCar = req.idCar
     let formData = req.body
     formData.carId = idCar
@@ -28,7 +32,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/', (req, res) => {
+router.put('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     const idCar = req.idCar
     let formData = req.body
     formData.carId = idCar
@@ -42,7 +46,7 @@ router.put('/', (req, res) => {
     });
 });
 
-router.delete('/', (req, res) =>{
+router.delete('/', VerifyToken, permit('admin'), (req, res) =>{
     const idCar = req.idCar
     let formData = req.body
     formData.carId = idCar
