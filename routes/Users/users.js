@@ -103,7 +103,7 @@ router.delete('/:uuid', VerifyToken, permit('admin'), (req, res) =>{
         if (err) 
           // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
           throw res.status(500).send("Erreur lors de la suppression des users");
-        if (req.role.name !== "admin") return res.status(403).json({message: "User is not authorized to delete users"})
+        if (req.role !== "admin") return res.status(403).json({message: "User is not authorized to delete users"})
     
         return res.status(200).json({ message: `User with id ${userUuid} has succesfully been deleted` })
       });
