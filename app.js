@@ -55,7 +55,12 @@ app.use('/users/:uuid/enterpriseInfo', (req, res, next) => {
     next()
 }, routes.enterpriseInfo);
 
-app.get("/", (req, res) => {
+// only contact
+app.use('/contact',function(req, res, next){
+    next()
+},routes.contact)
+
+app.get("/", function(req, res){
     res.send("Hi, I'm on the root '/'")
 })
 
