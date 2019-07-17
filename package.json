@@ -28,7 +28,11 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.1",
     "mysql2": "^1.6.5",
+<<<<<<< HEAD
+    "nodemailer": "^6.3.0",
+=======
     "nodemailer": "^6.2.1",
+>>>>>>> 97ed6f838840d6048d828b0b8d5705ba8fd62306
     "nodemon": "^1.19.1",
     "uuid": "^3.3.2",
     "view-engine": "^1.1.1"
