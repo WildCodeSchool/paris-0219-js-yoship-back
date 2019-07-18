@@ -18,6 +18,19 @@ const config = require("../../config");
 const VerifyToken = require('../auth/verifyToken');
 const permit = require('../auth/permission');
 
+// Email package
+const nodemailer = require('nodemailer');
+
+require('dotenv').config()
+
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASSWORD,
+    },
+  });
+
 // Register a new user
 // Access: Public
 router.post("/register", (req, res) => {
@@ -36,12 +49,28 @@ router.post("/register", (req, res) => {
     if (formData.role !== 'admin') {
         // Connecting to database
         connection.query(sql, formData, (err, user) => {
+            console.log(user)
+
             if (err)
               throw res.status(500).json({
                 err: err,
                 message:
                   "There was a problem registering the user."
               });
+
+            // Create a token
+            const token = jwt.sign({ uuid: formData.uuid, role: formData.role}, config.secret, {
+                expiresIn: 86400 // expires in 24 hours
+            });
+
+            const url = `http://localhost:3000/confirm/${token}`;
+
+            transporter.sendMail({
+                to: req.body.mail,
+                subject: 'Confirm Email',
+                html: `Please click this link to confirm your email: <a href="${url}">${url}</a>`,
+            });
+            
             // Response
             return res.status(200).json(user)
         });
@@ -62,10 +91,11 @@ router.post("/login", (req, res) => {
         // The user (email) is incorrect
         if (!user[0]) return res.status(404).send("No user found. This user doesn't exist");
 
+        if (!user[0].emailVerified) return res.status(403).json({ err: "Forbidden", message: "The user email is not verified" });
+
         // Check password validity
         const passwordIsValid = bcrypt.compareSync(req.body.password, user[0].password);
         if (!passwordIsValid) return res.status(401).send({ auth: false, token: null, error_msg: "This password is invalid" });
-
         // If user is found and password is valid
         // Create a token
         const token = jwt.sign({ uuid: user[0].uuid, role: user[0].role}, config.secret, {
@@ -78,6 +108,23 @@ router.post("/login", (req, res) => {
         res.status(200).json({ auth: true, token: token, uuid: user[0].uuid, role: user[0].role });
     });
 })
+
+router.put("/confirmation/:token", VerifyToken, (req, res, next) => {
+    // SQL Request, getting user via id
+    const sql = "UPDATE users SET emailVerified = ? WHERE uuid = ?";
+    console.log(req)
+    const values = [
+      true,
+      req.tokenUuid
+    ];
+    console.log(req.tokenUuid)
+    connection.query(sql, values, (err, user) => {
+        console.log(user)
+        if (err)
+        return res.status(500).send("There was a problem finding the user.");
+        res.status(200).send(user);
+    });
+});
 
 
 // Route to verify an admin role

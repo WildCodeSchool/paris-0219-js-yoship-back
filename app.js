@@ -10,22 +10,27 @@ const routes = require("./routes/index")
 // Instantiate server
 const app = express();
 
+
 // Middlewares
 app.use(morgan("dev"));
 app.use(cors());
 
 // Body Parser configuration
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json());
+
+app.use(bodyParser.json({limit: '10mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 
 // Sending to the right routes
 
 // Authentication
 app.use("/", routes.auth)
+// Upload
+app.use("/uploads", routes.upload)
+
 // Users
 app.use("/users", routes.users)
 // Drivers
-app.use("/users/:uuid/driverPapers", (req, res, next) => {
+app.use("/users/:uuid/driverPapers/", (req, res, next) => {
     // Passes the users id to the next route
     req.uuid = req.params.uuid; 
     next()
@@ -55,7 +60,12 @@ app.use('/users/:uuid/enterpriseInfo', (req, res, next) => {
     next()
 }, routes.enterpriseInfo);
 
-app.get("/", (req, res) => {
+// only contact
+app.use('/contact',function(req, res, next){
+    next()
+},routes.contact)
+
+app.get("/", function(req, res){
     res.send("Hi, I'm on the root '/'")
 })
 
