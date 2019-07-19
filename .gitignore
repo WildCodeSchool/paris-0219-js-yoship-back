@@ -6,3 +6,6 @@ node_modules
 
 # Package_lock
 package_lock.json
+
+# Files
+uploads

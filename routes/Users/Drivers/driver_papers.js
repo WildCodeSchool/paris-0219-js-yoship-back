@@ -13,7 +13,7 @@ const permit = require('../../auth/permission');
 
 //storage with multer
 const storage = multer.diskStorage({
-    destination: './public/uploads',
+    destination: './uploads',
     filename: (req, file, cb) => {
         cb(null, file.fieldname + '-' + Date.now() +
             path.extname(file.originalname))
@@ -98,10 +98,10 @@ router.put('/:fileType', VerifyToken, permit('admin', 'driver'), (req, res) => {
         } else {
             res.sendStatus(200);
             console.log('le fichier uploader est:', req.file.path)
-            
+            console.log(req.file)
             const type = req.fileType
             const userId = req.uuid
-            const file = req.file.path
+            const file = req.file.path;
 
             console.log(type,file)
             connection.query(`UPDATE driverPapers SET ${type} = ? WHERE userId = ?`, [ file, userId], err => {
