@@ -20,11 +20,6 @@ const storage = multer.diskStorage({
     }
 })
 
-//Create an upload instance and receive a single file
-// const upload = multer({
-//     storage: storage,
-//     limits: { fileSize: 1000000 }
-// }).single('file')
 
 
 // écoute de l'url "/users/:id/driver_papers"
@@ -49,34 +44,45 @@ router.get('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
 // écoute de l'url "/users/:id/driver_papers" avec le verbe POST
 router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
 
+    // Create an upload instance and receive a single file
+    const upload = multer({
+        storage: storage
+    }).any()
+
+    
     upload(req, res, (err) => {
+        console.log(req.files)
+        console.log("1")
         if (err) {
-            console.log("res", res)
-            console.log("req", req)
+            // console.log("res", res)
+            // console.log("req", req)
+            console.log("2")
             return res.status(500).json(err)
-        } else if (req.file == undefined) {
+        } else if (req.files == undefined) {
+            console.log("3")
             return res.status(500).send('pas de fichier')
         } else {
-            console.log('le fichier uploader est:', req.file)
-            return res.status(200).send(req.file)
-        }
-    }
-
-    )
-    // récupération des données envoyées
-    const userId = req.uuid
-    const formData = req.body
-    formData.userId = userId
-    // connexion à la base de données, et insertion des driver_papers
-    connection.query('INSERT INTO driverPapers SET ?', [formData, userId], (err, results) => {
-        if (err) {
-            // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-            console.log(err);
-            console.log(results)
-            res.status(500).send("Erreur lors de la sauvegarde des driversPapers");
-        } else {
-            // Si tout s'est bien passé, on envoie un statut "ok".
-            res.sendStatus(200);
+            console.log("4")
+            console.log(req.files[0])
+            // récupération des données envoyées
+            const userId = req.uuid
+            const formData = req.body
+            // Creates path of all documents uplodead in a normal form
+            req.files.map(document => formData[document["fieldname"]] = document.path)
+            console.log(formData)
+            formData.userId = userId
+            // connexion à la base de données, et insertion des driver_papers
+            connection.query("INSERT INTO driverPapers SET ?", formData, (err, results) => {
+                if (err) {
+                    // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+                    console.log(err);
+                    console.log(results)
+                    res.status(500).json({error: err, message: "Erreur lors de la sauvegarde des driversPapers"});
+                } else {
+                    // Si tout s'est bien passé, on envoie un statut "ok".
+                    res.status(200).send(results)
+                }
+            });
         }
     });
 });
@@ -104,7 +110,7 @@ router.put('/:fileType', VerifyToken, permit('admin', 'driver'), (req, res) => {
             const file = req.file.path;
 
             console.log(type,file)
-            connection.query(`UPDATE driverPapers SET ${type} = ? WHERE userId = ?`, [ file, userId], err => {
+            connection.query(`UPDATE driverPapers SET ${type} = ? WHERE userId = ?`, [file, userId], err => {
                 if (err) {
                     // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
                     console.log('ok', err);
