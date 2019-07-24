@@ -54,8 +54,7 @@ router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
         console.log(req.files)
         console.log("1")
         if (err) {
-            // console.log("res", res)
-            // console.log("req", req)
+
             console.log("2")
             return res.status(500).json(err)
         } else if (req.files == undefined) {
@@ -102,7 +101,6 @@ router.put('/:fileType', VerifyToken, permit('admin', 'driver'), (req, res) => {
         } else if (req.file == undefined) {
             return res.status(500).send('pas de fichier')
         } else {
-            res.sendStatus(200);
             console.log('le fichier uploader est:', req.file.path)
             console.log(req.file)
             const type = req.fileType
@@ -110,13 +108,14 @@ router.put('/:fileType', VerifyToken, permit('admin', 'driver'), (req, res) => {
             const file = req.file.path;
 
             console.log(type,file)
-            connection.query(`UPDATE driverPapers SET ${type} = ? WHERE userId = ?`, [file, userId], err => {
+            connection.query(`UPDATE driverPapers SET ${type} = ? WHERE userId = ?`, [file, userId], (err, results) => {
                 if (err) {
                     // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
                     console.log('ok', err);
                     res.status(500).send("Erreur lors de la modification des driversPapers");
                 } else {
-                    // Si tout s'est bien passé, on envoie un statut "ok".
+                    console.log(results)
+                    res.status(200).json(results)
                 }
             })
         }
