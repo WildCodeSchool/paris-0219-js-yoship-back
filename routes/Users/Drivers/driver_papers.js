@@ -20,39 +20,29 @@ const storage = multer.diskStorage({
     }
 })
 
-//Create an upload instance and receive a single file
-// const upload = multer({
-//     storage: storage,
-//     limits: { fileSize: 1000000 }
-// }).single('file')
-
-
-// écoute de l'url "/users/:id/driver_papers"
+//listening to the url "/users/:id/driver_papers"
 router.get('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     const userId = req.uuid
     const formData = req.body
     formData.userId = userId
 
-    // connection à la base de données, et sélection des driver_papers
+    //connection to the database, and selection of driver_papers
     connection.query('SELECT * FROM driverPapers WHERE userId = ?', userId, (err, results) => {
         if (err) {
-            // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-            console.log(err);
+            //If an error has occurred, then the user is informed of the error
             res.status(500).send('Erreur lors de la récupération des driverPapers');
         } else {
-            // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+            //If everything went well, the result of the SQL query is sent as JSON.
             res.json(results);
         }
     })
 })
 
-// écoute de l'url "/users/:id/driver_papers" avec le verbe POST
+//listening to the url "/users/:id/driver_papers" with the verb POST
 router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
 
     upload(req, res, (err) => {
         if (err) {
-            console.log("res", res)
-            console.log("req", req)
             return res.status(500).json(err)
         } else if (req.file == undefined) {
             return res.status(500).send('pas de fichier')
@@ -63,26 +53,24 @@ router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     }
 
     )
-    // récupération des données envoyées
+    //get sent data
     const userId = req.uuid
     const formData = req.body
     formData.userId = userId
-    // connexion à la base de données, et insertion des driver_papers
+    //connection to the database, and insertion of the driver_papers
     connection.query('INSERT INTO driverPapers SET ?', [formData, userId], (err, results) => {
         if (err) {
-            // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-            console.log(err);
-            console.log(results)
+            //If an error has occurred, then the user is informed of the error
             res.status(500).send("Erreur lors de la sauvegarde des driversPapers");
         } else {
-            // Si tout s'est bien passé, on envoie un statut "ok".
+            //If everything went well, we send a status "ok".
             res.sendStatus(200);
         }
     });
 });
 
-// Si l'ID est passé en tant que paramètre
-// écoute de l'url "/users/:id/driver_papers"
+//If the ID is passed as a parameter
+//listening to the url "/users/:id/driver_papers"
 router.put('/:fileType', VerifyToken, permit('admin', 'driver'), (req, res) => {
     req.fileType = req.params.fileType
     const upload = multer({
@@ -98,44 +86,38 @@ router.put('/:fileType', VerifyToken, permit('admin', 'driver'), (req, res) => {
         } else {
             res.sendStatus(200);
             console.log('le fichier uploader est:', req.file.path)
-            
+
             const type = req.fileType
             const userId = req.uuid
             const file = req.file.path
 
-            console.log(type,file)
             connection.query(`UPDATE driverPapers SET ${type} = ? WHERE userId = ?`, [ file, userId], err => {
                 if (err) {
-                    // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-                    console.log('ok', err);
+                    //If an error has occurred, then the user is informed of the error
                     res.status(500).send("Erreur lors de la modification des driversPapers");
                 } else {
-                    // Si tout s'est bien passé, on envoie un statut "ok".
+                    //If everything went well, we send a status "ok".
+                    res.sendStatus(200);
                 }
             })
         }
     })
 })
 
-
-//     // connection à la base de données, et insertion de l'employé
-
-// });
-
-// écoute de l'url "/"
+//connection to the database, and insertion of the employee
+//listening to the url "/"
 router.delete('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     const userId = req.uuid
     const formData = req.body
     formData.userId = userId
 
-    // connexion à la base de données, et suppression de l'employé
+    //connection to the database, and deletion of the employee
     connection.query('DELETE FROM driverPapers WHERE userId = ?', userId, err => {
         if (err) {
-            // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-            console.log(err);
+            //If an error has occurred, then the user is informed of the error
             res.status(500).send("Erreur lors de la suppression des driversPaper");
         } else {
-            // Si tout s'est bien passé, on envoie un statut "ok".
+            //If everything went well, we send a status "ok".
             res.sendStatus(200);
         }
     });

@@ -3,7 +3,6 @@ const app = require('./app');
 require('dotenv').config();
 
 // Server port
-
 const PORT = process.env.PORT || 3023;
 
 // Launch Server

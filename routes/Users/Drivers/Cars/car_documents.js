@@ -24,7 +24,6 @@ router.post('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     formData.carId = idCar
     connection.query('INSERT INTO carDocuments SET ?', formData, (err, results) => {
         if (err) {
-            console.log(err);
             res.status(500).send("Erreur lors de la sauvegarde des carDocuments");
         } else {
             res.sendStatus(200);
@@ -38,7 +37,6 @@ router.put('/', VerifyToken, permit('admin', 'driver'), (req, res) => {
     formData.carId = idCar
     connection.query('UPDATE carDocuments SET ?', [formData], err => {
         if (err) {
-            console.log(err);
             res.status(500).send("Erreur lors de la modification des carDocuments");
         } else {
             res.sendStatus(200);
@@ -52,7 +50,6 @@ router.delete('/', VerifyToken, permit('admin'), (req, res) =>{
     formData.carId = idCar
     connection.query('DELETE FROM carDocuments', err => {
       if (err) {
-        console.log(err);
         res.status(500).send("Erreur lors de la suppression des carDocuments");
       } else {
         res.sendStatus(200);

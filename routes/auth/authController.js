@@ -49,8 +49,6 @@ router.post("/register", (req, res) => {
     if (formData.role !== 'admin') {
         // Connecting to database
         connection.query(sql, formData, (err, user) => {
-            console.log(user)
-
             if (err)
               throw res.status(500).json({
                 err: err,
@@ -85,7 +83,6 @@ router.post("/login", (req, res) => {
     const values = [req.body.mail];
     // Connecting to database
     connection.query(sql, values, (err, user) => {
-        console.log(user[0])
         // Errors
         if (err) throw res.status(500).send("There was a problem finding the users.");
         // The user (email) is incorrect
@@ -112,14 +109,11 @@ router.post("/login", (req, res) => {
 router.put("/confirmation/:token", VerifyToken, (req, res, next) => {
     // SQL Request, getting user via id
     const sql = "UPDATE users SET emailVerified = ? WHERE uuid = ?";
-    console.log(req)
     const values = [
       true,
       req.tokenUuid
     ];
-    console.log(req.tokenUuid)
     connection.query(sql, values, (err, user) => {
-        console.log(user)
         if (err)
         return res.status(500).send("There was a problem finding the user.");
         res.status(200).send(user);

@@ -13,8 +13,6 @@ const verifyToken = (req, res, next) => {
     // if everything is good, save to request for use in other routes
     req.tokenUuid = decoded.uuid;
     req.role = decoded.role;
-    console.log(req.route.path)
-    console.log(decoded)
 
     next();
   });

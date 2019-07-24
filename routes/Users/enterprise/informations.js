@@ -23,7 +23,6 @@ router.get("/", VerifyToken, permit('admin', 'enterprise'), (req, res) => {
         if (!results[0])
             return res.status(404).send(`No enterprise informations found for ${userId}`)
         // Sends results
-        console.log(results)
         return res.status(200).send(results)
     })
 })
@@ -37,7 +36,6 @@ router.post('/', VerifyToken, permit('admin', 'enterprise'), (req, res) => {
     const userId = req.uuid
     const formData = req.body
     formData.user_id = userId
-    console.log(req.uuid)
 
     // Connecting to the database
     connection.query('INSERT INTO enterpriseInformations SET ?', formData, (err, results) => {
@@ -51,7 +49,6 @@ router.post('/', VerifyToken, permit('admin', 'enterprise'), (req, res) => {
                 "There was a problem adding enterprise informations to the database."
             });
         // Everything went well, enterprise infos are being added
-        console.log(results)
         return res
           .status(200)
           .json({

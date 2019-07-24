@@ -3,15 +3,13 @@ const nodemailer = require("nodemailer");
 const bodyParser = require('body-parser');
 const router = express.Router()
 const exphbs = require('express-handlebars'); // template
-const app = express(); //Pour utiliser express via app
+const app = express();
 
 require('dotenv').config();
 
 //View engine setup
 app.engine('handlebars', exphbs()); // use template
 app.set('view engine', 'handlebars'); // name view engine value handlebars
-
-//require('dotenv').config();
 
 // Body parser Middleware
 app.use(bodyParser.urlencoded({
@@ -49,11 +47,8 @@ router.post('/', (req, res) => {
 
   const sender = req.body.email;
   const status = req.body.status;
-  const firstname = req.body.firstname;
-  const lastname = req.body.lastname;
   const message = req.body.message;
-  const phone = req.body.phone; 
-  
+
   const mailOptions = {
     // The e-mail address of the sender
     from: sender, 
@@ -65,7 +60,7 @@ router.post('/', (req, res) => {
     text: message, // plain text body
     html: output
   };
-  console.log(mailOptions)
+  
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       return console.error(error);
@@ -77,10 +72,6 @@ router.post('/', (req, res) => {
    
   res.sendStatus(200);
 });
-
-// module.exports = {
-//   pass: process.env.MDP_MAILER
-// }
 
 module.exports = router;
 

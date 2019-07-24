@@ -13,8 +13,6 @@ router.get("/", VerifyToken, permit('admin', 'driver'), (req, res) => {
   const sql = "SELECT * FROM cars WHERE userId = ?"
   connection.query(sql, userId, (err, results) => {
     if (err) {
-      console.log(err);
-      
       res.status(500).send('Erreur lors de la récupération des voitures');
     } else if (!results[0]){
       return res.status(404).send(`No car found for user ${userId}`)
@@ -30,7 +28,6 @@ router.post("/", VerifyToken, permit('admin', 'driver'), (req, res) => {
   formData.userId = userId
   connection.query('INSERT INTO cars SET ?', formData, (err, results) => {
     if (err) {
-      console.log(err); 
       res.status(500).send(`Erreur lors de la sauvegarde de la voiture pour l'utilisateur ${userId}`);
     } else {
       res.sendStatus(200);
@@ -44,7 +41,6 @@ router.put("/", VerifyToken, permit('admin'), (req, res) => {
   const sql = 'UPDATE cars SET ? WHERE userId = ?'
   connection.query(sql, [formData, userId], err => {
     if (err) {
-      console.log(err);
       res.status(500).send(`Erreur lors de la modification des voitures pour l'utilisateur ${userId}`);
     } else {
       res.sendStatus(200);
@@ -57,7 +53,6 @@ router.delete('/', VerifyToken, permit('admin'), (req, res) =>{
   const sql = 'DELETE FROM cars WHERE userId = ?'
   connection.query(sql, userId, err => {
     if (err) {
-      console.log(err);
       res.status(500).send(`Erreur lors de la suppression des voitures pour l'utilisateur ${userId}`);
     } else {
       res.sendStatus(200);
@@ -67,15 +62,12 @@ router.delete('/', VerifyToken, permit('admin'), (req, res) =>{
 
 router.get("/:carId", VerifyToken, permit('admin', 'driver'), (req, res) => {
     const idCar = req.params.carId;
-    //console.log(idCar)
     connection.query('SELECT * FROM cars WHERE id = ?', [idCar], (err, results) => { 
         //error 500 (Internal Server Error) 
         if (err) {
             res.status(500).send("Erreur lors de la récupération des données'/users/:uuid/car/:id'");
         } else {
-            //console.log(results)
             res.json(results);
-            //res.send(`I'm on GET /users/:id/${idCar}`)
         }
     });
 });
@@ -84,11 +76,9 @@ router.get("/:carId", VerifyToken, permit('admin', 'driver'), (req, res) => {
 router.put("/:carId", VerifyToken, permit('admin', 'driver'), (req, res) => {
     const idCar = req.params.carId;
     const formData = req.body;
-    console.log('console.log formData: ', formData);
     connection.query('UPDATE cars SET ? WHERE id = ?', [formData, idCar], (err, results) => {
             //error 500 (Internal Server Error) 
         if (err) {
-            console.log(err);
             res.status(500).send("Erreur lors de la modification des données'/users/:uuid/car/:id'");
         } else {
             //res.sendStatus(200);
@@ -100,7 +90,6 @@ router.put("/:carId", VerifyToken, permit('admin', 'driver'), (req, res) => {
 // Remove car:id 
 router.delete("/:carId", VerifyToken, permit('admin', 'driver'), (req, res) => {
     const idCar = req.params.carId;
-    console.log(idCar);
     
     connection.query('DELETE FROM cars WHERE id = ?', [idCar], err => {
         //error 500 (Internal Server Error) 
