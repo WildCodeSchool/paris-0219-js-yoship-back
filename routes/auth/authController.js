@@ -59,9 +59,7 @@ router.post("/register", (req, res) => {
               });
 
             // Create a token
-            const token = jwt.sign({ uuid: formData.uuid, role: formData.role}, config.secret, {
-                expiresIn: 86400 // expires in 24 hours
-            });
+            const token = jwt.sign({ uuid: formData.uuid, role: formData.role}, config.secret);
 
             const url = `http://localhost:3000/confirm/${token}`;
 
@@ -91,7 +89,7 @@ router.post("/login", (req, res) => {
         // The user (email) is incorrect
         if (!user[0]) return res.status(404).send("No user found. This user doesn't exist");
 
-        if (!user[0].emailVerified) return res.status(403).json({ err: "Forbidden", message: "The user email is not verified" });
+        // if (!user[0].emailVerified) return res.status(403).json({ err: "Forbidden", message: "The user email is not verified" });
 
         // Check password validity
         const passwordIsValid = bcrypt.compareSync(req.body.password, user[0].password);
@@ -105,7 +103,7 @@ router.post("/login", (req, res) => {
         res.header("Access-Control-Expose-Headers", "x-access-token")
         res.set("x-access-token", token)
 
-        res.status(200).json({ auth: true, token: token, uuid: user[0].uuid });
+        res.status(200).json({ auth: true, token: token, uuid: user[0].uuid, role: user[0].role });
     });
 })
 
