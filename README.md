@@ -1,11 +1,12 @@
-YoShip
+##YoShip
+
 YoShip is a cool project with a JS back and front app.
 
 Front : https://github.com/GaetanRole/yoship-front
 Back : https://github.com/GaetanRole/yoship-back
 This project is made by Wild Code School students in Paris and it is made in Javascript (React / NodeJS). It aims to promote a new way of delivery (like Chronopost) but mainly for luxury brands.
 
-Installation instructions
+###Installation instructions
 
 Before starting you will need to install mysql2 and create the database with the yoship.sql file you will find at the root of the back repository.
 
@@ -30,4 +31,5 @@ REACT_APP_SERVER_PORT= port you will be using for the back (must be the same as 
 After the packages have been installed, you can now run both the front and the back. You will need to run npm start on both sides.
 
 Both sides are running in hot-reload mode, so changes will be put in place as you make them, instead of having to restart the service for each change.
+
 
