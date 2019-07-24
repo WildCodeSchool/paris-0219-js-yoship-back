@@ -7,5 +7,7 @@ node_modules
 # Package_lock
 package_lock.json
 
-# Files
+# Ignore uploads folder
 uploads
+# Except upload.js
+!upload.js
