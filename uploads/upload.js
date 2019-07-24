@@ -1,15 +1,13 @@
 //Imports
 const express = require("express")
-const multer = require('multer')
 const path = require('path')
-const connection = require("../../helper/db")
 
 //Router
 const router = express.Router()
 
 // Auth
-const VerifyToken = require("../../routes/auth/verifyToken");
-const permit = require("../../routes/auth/permission");
+const VerifyToken = require("../routes/auth/verifyToken");
+const permit = require("../routes/auth/permission");
 
 
 router.get('/:fileName', (req, res) => {
