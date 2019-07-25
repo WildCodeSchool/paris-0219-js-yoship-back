@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `yoship`.`cars` (
   `userId` VARCHAR(256) NOT NULL,
   `brand` VARCHAR(32) NOT NULL,
   `modelYear` DATETIME NOT NULL,
-  `kilometers` VARCHAR(5) NOT NULL,
+  `kilometers` VARCHAR(6) NOT NULL,
   `horsepower` VARCHAR(3) NOT NULL,
   `licencePlate` VARCHAR(16) NOT NULL,
   `color` VARCHAR(64) NOT NULL,
